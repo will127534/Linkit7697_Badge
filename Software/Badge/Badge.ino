@@ -39,7 +39,7 @@ unsigned long epoch = 0;
 bool RTC_flag = 0;
 
 int mode = 0;
-#define MODES 3
+#define MODES 4
 
 void setup() {
   for(int i=0; i<9; i++){
@@ -90,40 +90,46 @@ void setup() {
   if(ssid[0] == 0 || pass[0] == 0){ //Empty SSID and Password => Update Wifi Setting
         Serial.println("Wifi Setting not found, Please reEnter Wifi Setting");
         drawframe(Wifi_not_found,0,0,18,16);
-        UpdateWifiSetting();
-        reset();
+        delay(2000);
   }
-  
-  for(int i=0;i<5;i++){
-      animation(Wifi_search,4,0,0,18,16,50);  
-  }
-  
-  int retry = 0;
-  while (status != WL_CONNECTED) {
-    retry++;
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
-    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
-    status = WiFi.begin(ssid, pass);
+  else{
+    
     for(int i=0;i<5;i++){
-      animation(Wifi_search,4,0,0,18,16,50);  
+        animation(Wifi_search,4,0,0,18,16,50);  
     }
     
-    if(retry>1){
-        Serial.println("Unable to Connect to Wifi AP, Please reEnter Wifi Setting");
-        drawframe(Wifi_not_found,0,0,18,16);
-        UpdateWifiSetting();
-        reset();
+    int retry = 0;
+
+    while (status != WL_CONNECTED) {
+      retry++;
+      Serial.print("Attempting to connect to SSID: ");
+      Serial.println(ssid);
+      // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
+      status = WiFi.begin(ssid, pass);
+      for(int i=0;i<5;i++){
+        animation(Wifi_search,4,0,0,18,16,50);  
+      }
+      
+      if(retry>1){
+          Serial.println("Unable to Connect to Wifi AP, Please reEnter Wifi Setting");
+          drawframe(Wifi_not_found,0,0,18,16);
+          delay(2000);
+          break;
+      }
+
     }
-
   }
-  
-  Serial.println("Connected to wifi");
 
-  printWifiStatus();
-  epoch = getUTC();
-  Serial.println(epoch);
-  epoch = epoch + 8*3600; //UTC+8
+  if(status == WL_CONNECTED){
+    Serial.println("Connected to wifi");
+
+    printWifiStatus();
+    epoch = getUTC();
+    Serial.println(epoch);
+    epoch = epoch + 8*3600; //UTC+8
+    
+  }
+
   hal_gpt_running_status_t running_status;
   hal_gpt_status_t         ret_status;
 
@@ -137,6 +143,8 @@ void setup() {
   }
   hal_gpt_register_callback(HAL_GPT_1, RTC_Tick, &epoch); //Register a user callback.
   hal_gpt_start_timer_ms(HAL_GPT_1, 1000, HAL_GPT_TIMER_TYPE_REPEAT);
+
+  changeMode();
 }
 
 
@@ -153,6 +161,11 @@ void loop() {
         break;
       case 2:
         tetris();
+        changeMode();
+        // do something
+        break;
+      case 3:
+        UpdateWifiSetting();
         changeMode();
         // do something
         break;
@@ -206,7 +219,6 @@ void changeMode(){
         matrix.fillTriangle(17,7,15,5,15,9,100);
     }
     */
-    Serial.println(mode);
     matrix.displayFrame(counter%2);
     delay(50);
   }
@@ -431,11 +443,14 @@ void printWifiStatus() {
 }
 
 void UpdateWifiSetting(){
+
   Serial.println("Please enter Wifi SSID:");
+  drawframe(Wifi_input,0,0,18,16);
   bool Reading = 1;
   
   char SSID[100] = {0};
   char PASSWD[100] = {0};
+
 
   Serial.readBytesUntil('\n', SSID, 100); 
   
@@ -464,6 +479,7 @@ void UpdateWifiSetting(){
   else{
       Serial.println("Write Error");
   }
+  reset();
 }
 //#################### UTC ####################
 unsigned long getUTC(){

@@ -97,7 +97,7 @@ bool Snake_loop() {
      return 0;
   }
   //(x_move,y_move) (x_d,y_d)
-  if((x_move*x_d)+(y_move*y_d)>0){ //not the reverse of the current movement
+  if( (abs(x_move+x_d)+abs(y_move+y_d)>0) && ( x_d!=0 || y_d!=0) ){ //not the reverse of the current movement
       x_move = x_d;
       y_move = y_d;
   }
@@ -154,9 +154,9 @@ bool Snake_loop() {
           UPDATE_RATE = 1.0/length*1000.0;
 
     }
-    Serial.print(current_position.x);
-    Serial.print(" ");
-    Serial.println(current_position.y);
+//    Serial.print(current_position.x);
+//    Serial.print(" ");
+//    Serial.println(current_position.y);
     history_positions.push_back(current_position);
     if(history_positions.size()>length){
         history_positions.pop_front();
