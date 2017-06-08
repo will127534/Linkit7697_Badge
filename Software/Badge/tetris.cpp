@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "Game.h"
+#include "Tetris_Game.h"
 #include "Control.hpp"
 
 bool tetris()

@@ -1,6 +1,4 @@
 #include <Wire.h>
-//#include <Adafruit_GFX.h>
-//#include <Adafruit_IS31FL3731.h>
 #include "SparkFunLIS3DH.h"
 #include "icon.c"
 #include <hal_gpt.h>
@@ -12,7 +10,7 @@
 #include <LBLECentral.h>
 #include <time.h> 
 #include "Snake.hpp"
-#include "tetris.hpp"
+#include "Tetris.hpp"
 #include "Control.hpp"
 
 

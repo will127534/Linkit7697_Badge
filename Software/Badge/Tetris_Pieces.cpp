@@ -1,25 +1,25 @@
 /*****************************************************************************************
-/* File: Pieces.cpp
-/* Desc: All the Tetris pieces with their respective rotations and displacements for the hotspot
-/*
-/* gametuto.com - Javier L�pez L�pez (javilop.com)
-/*
-/*****************************************************************************************
-/*
-/* Creative Commons - Attribution 3.0 Unported
-/* You are free:
-/*	to Share � to copy, distribute and transmit the work
-/*	to Remix � to adapt the work
-/*
-/* Under the following conditions:
-/* Attribution. You must attribute the work in the manner specified by the author or licensor 
-/* (but not in any way that suggests that they endorse you or your use of the work).
-/*
-/*****************************************************************************************/
+ * File: Pieces.cpp
+ * Desc: All the Tetris pieces with their respective rotations and displacements for the hotspot
+ *
+ * gametuto.com - Javier Lopez Lopez (javilop.com)
+ *
+ *****************************************************************************************
+ *
+ * Creative Commons - Attribution 3.0 Unported
+ * You are free:
+ *	to Share o to copy, distribute and transmit the work
+ *	to Remix o to adapt the work
+ *
+ * Under the following conditions:
+ * Attribution. You must attribute the work in the manner specified by the author or licensor 
+ * (but not in any way that suggests that they endorse you or your use of the work).
+ *
+ *****************************************************************************************/
 
 // ----- Includes -----
 
-#include "Pieces.h"
+#include "Tetris_Pieces.h"
 
 // Pieces definition
 static char mPieces [7 /*kind */ ][4 /* rotation */ ][5 /* horizontal blocks */ ][5 /* vertical blocks */ ] =
