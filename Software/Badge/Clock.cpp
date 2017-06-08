@@ -90,15 +90,30 @@ unsigned long getNetworkUTCTime()
     Serial.println("Starting connection to server...");
     const unsigned int localPort = 2390; // local port to listen for UDP packets
     Udp.begin(localPort);
-    sendNTPpacket(NTP_server); // send an NTP packet to a time server
 
-    while (!Udp.parsePacket())
+    // Try at most 3 times before bailing out
+    const int MAX_RETRY_COUNT = 3;
+    int retryCount = 0;
+    bool responsed = false;
+    do
     {
-        delay(50);
-    }
-    Serial.println("packet received");
+        sendNTPpacket(NTP_server);          // send an NTP packet to a time server
+        const int RETRY_TIMEOUT = 5 * 1000; // wait at most 5 seconds
+        const uint32_t startMS = millis();
+        while ((RETRY_TIMEOUT) > (millis() - startMS))
+        {
+            delay(50);
+            if (Udp.parsePacket())
+            {
+                // we got something
+                responsed = true;
+                break;
+            }
+        }
+        retryCount++;
+    } while (!responsed && retryCount < MAX_RETRY_COUNT);
 
-    if (Udp.available())
+    if (responsed)
     {
         // We've received a packet, read the data from it
         const size_t readSize = Udp.read(packetBuffer, NTP_PACKET_SIZE); // read the packet into the buffer
