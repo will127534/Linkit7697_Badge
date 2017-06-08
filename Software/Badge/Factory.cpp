@@ -236,6 +236,7 @@ void jumpToUnitTest()
       continue;
     }
     matrix.clear();
+    matrix.setTextColor(100 * analogRead(A0) / 512.0);
     if (button_pushed == UP_BUTTON || button_pushed == DOWN_BUTTON)
     {
       matrix.setCursor(4, 4);
