@@ -73,6 +73,7 @@ int scanButton();
 
 /// Check if any button is pressed.
 /// If a button is pressed, BLOCK until it is released.
+/// TODO: current, USR_BUTTON is not supported.
 ///
 /// \returns key code (Arduino Pin #) such as X_BUTTON if a button is pressed and then released.
 /// \returns -1 (NO_BUTTON) if no button pressed.

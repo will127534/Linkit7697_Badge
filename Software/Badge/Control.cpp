@@ -39,6 +39,12 @@ int scanButton()
     if (digitalRead(buttons[i]) == 0)
       return buttons[i];
   }
+
+  if(digitalRead(USR_BUTTON))
+  {
+    return USR_BUTTON;
+  }
+  
   return NO_BUTTON;
 }
 

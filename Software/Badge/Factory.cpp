@@ -274,6 +274,11 @@ void jumpToUnitTest()
     case Y_BUTTON:
       matrix.print("Y");
       break;
+    case USR_BUTTON:
+      matrix.print("U");
+      break;
     }
+
+
   }
 }
