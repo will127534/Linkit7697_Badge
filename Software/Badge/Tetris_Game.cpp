@@ -21,13 +21,12 @@
 #include <Arduino.h>
 #include "Tetris_Game.h"
 
-
 /* 
 ======================================									
 Init
 ====================================== 
 */
-Game::Game(Board *pBoard, Pieces *pPieces, IO *pIO, int pScreenHeight) 
+Game::Game(Board *pBoard, Pieces *pPieces, IO *pIO, int pScreenHeight)
 {
 	mScreenHeight = pScreenHeight;
 
@@ -37,9 +36,8 @@ Game::Game(Board *pBoard, Pieces *pPieces, IO *pIO, int pScreenHeight)
 	mIO = pIO;
 
 	// Game initialization
-	InitGame ();
+	InitGame();
 }
-
 
 /* 
 ======================================									
@@ -50,11 +48,10 @@ Parameters:
 >> pB: Second number
 ====================================== 
 */
-int Game::GetRand (int pA, int pB)
+int Game::GetRand(int pA, int pB)
 {
-	return rand () % (pB - pA + 1) + pA;
+	return rand() % (pB - pA + 1) + pA;
 }
-
 
 /* 
 ======================================									
@@ -64,19 +61,18 @@ Initial parameters of the game
 void Game::InitGame()
 {
 	// Init random numbers
-	srand ((unsigned int) millis());
+	srand((unsigned int)millis());
 
 	// First piece
-	mPiece			= GetRand (0, 6);
-	mRotation		= GetRand (0, 3);
-	mPosX 			= (BOARD_WIDTH / 2) + mPieces->GetXInitialPosition (mPiece, mRotation);
-	mPosY 			= mPieces->GetYInitialPosition (mPiece, mRotation);
+	mPiece = GetRand(0, 6);
+	mRotation = GetRand(0, 3);
+	mPosX = (BOARD_WIDTH / 2) + mPieces->GetXInitialPosition(mPiece, mRotation);
+	mPosY = mPieces->GetYInitialPosition(mPiece, mRotation);
 
 	//  Next piece
-	mNextPiece 		= GetRand (0, 6);
-	mNextRotation 	= GetRand (0, 3);
+	mNextPiece = GetRand(0, 6);
+	mNextRotation = GetRand(0, 3);
 }
-
 
 /* 
 ======================================									
@@ -86,16 +82,15 @@ Create a random piece
 void Game::CreateNewPiece()
 {
 	// The new piece
-	mPiece			= mNextPiece;
-	mRotation		= mNextRotation;
-	mPosX 			= (BOARD_WIDTH / 2) + mPieces->GetXInitialPosition (mPiece, mRotation);
-	mPosY 			= mPieces->GetYInitialPosition (mPiece, mRotation);
+	mPiece = mNextPiece;
+	mRotation = mNextRotation;
+	mPosX = (BOARD_WIDTH / 2) + mPieces->GetXInitialPosition(mPiece, mRotation);
+	mPosY = mPieces->GetYInitialPosition(mPiece, mRotation);
 
 	// Random next piece
-	mNextPiece 		= GetRand (0, 6);
-	mNextRotation 	= GetRand (0, 3);
+	mNextPiece = GetRand(0, 6);
+	mNextRotation = GetRand(0, 3);
 }
-
 
 /* 
 ======================================									
@@ -109,10 +104,10 @@ Parameters:
 >> pRotation:	1 of the 4 possible rotations
 ====================================== 
 */
-void Game::DrawPiece (int pX, int pY, int pPiece, int pRotation)
+void Game::DrawPiece(int pX, int pY, int pPiece, int pRotation)
 {
-	color mColor;				// Color of the block 
-/*
+	color mColor; // Color of the block
+				  /*
 	Serial.println("draw piece");
 	Serial.print(pX);
 	Serial.print(" ");
@@ -120,9 +115,8 @@ void Game::DrawPiece (int pX, int pY, int pPiece, int pRotation)
 	Serial.println();
 */
 	// Obtain the position in pixel in the screen of the block we want to draw
-	int mPixelsX = mBoard->GetXPosInPixels (pX);
-	int mPixelsY = mBoard->GetYPosInPixels (pY);
-	
+	int mPixelsX = mBoard->GetXPosInPixels(pX);
+	int mPixelsY = mBoard->GetYPosInPixels(pY);
 
 	// Travel the matrix of blocks of the piece and draw the blocks that are filled
 	for (int i = 0; i < PIECE_BLOCKS; i++)
@@ -130,22 +124,25 @@ void Game::DrawPiece (int pX, int pY, int pPiece, int pRotation)
 		for (int j = 0; j < PIECE_BLOCKS; j++)
 		{
 			// Get the type of the block and draw it with the correct color
-			switch (mPieces->GetBlockType (pPiece, pRotation, j, i))
+			switch (mPieces->GetBlockType(pPiece, pRotation, j, i))
 			{
-				case 1: mColor = GREEN; break;	// For each block of the piece except the pivot
-				case 2: mColor = BLUE; break;	// For the pivot
+			case 1:
+				mColor = GREEN;
+				break; // For each block of the piece except the pivot
+			case 2:
+				mColor = BLUE;
+				break; // For the pivot
 			}
-			
-			if (mPieces->GetBlockType (pPiece, pRotation, j, i) != 0)
-				mIO->DrawRectangle	(mPixelsX + i * BLOCK_SIZE, 
-									mPixelsY + j * BLOCK_SIZE, 
-									(mPixelsX + i * BLOCK_SIZE) + BLOCK_SIZE - 1, 
-									(mPixelsY + j * BLOCK_SIZE) + BLOCK_SIZE - 1, 
-									mColor);
+
+			if (mPieces->GetBlockType(pPiece, pRotation, j, i) != 0)
+				mIO->DrawRectangle(mPixelsX + i * BLOCK_SIZE,
+								   mPixelsY + j * BLOCK_SIZE,
+								   (mPixelsX + i * BLOCK_SIZE) + BLOCK_SIZE - 1,
+								   (mPixelsY + j * BLOCK_SIZE) + BLOCK_SIZE - 1,
+								   mColor);
 		}
 	}
 }
-
 
 /* 
 ======================================									
@@ -154,26 +151,23 @@ Draw board
 Draw the two lines that delimit the board
 ====================================== 
 */
-void Game::DrawBoard ()
+void Game::DrawBoard()
 {
-	Serial.println("begin DrawBoard");
 	// Drawing the blocks that are already stored in the board
 	for (int i = 0; i < BOARD_WIDTH; i++)
 	{
 		for (int j = 0; j < BOARD_HEIGHT; j++)
-		{	
+		{
 			// Check if the block is filled, if so, draw it
-			if (!mBoard->IsFreeBlock(i, j))	
-				mIO->DrawRectangle (	i * BLOCK_SIZE, 
-										j * BLOCK_SIZE, 
-										i * BLOCK_SIZE + BLOCK_SIZE - 1, 
-										j * BLOCK_SIZE + BLOCK_SIZE - 1, 
-										RED);
+			if (!mBoard->IsFreeBlock(i, j))
+				mIO->DrawRectangle(i * BLOCK_SIZE,
+								   j * BLOCK_SIZE,
+								   i * BLOCK_SIZE + BLOCK_SIZE - 1,
+								   j * BLOCK_SIZE + BLOCK_SIZE - 1,
+								   RED);
 		}
 	}
-	Serial.println("end drawBoard");
 }
-
 
 /* 
 ======================================									
@@ -182,8 +176,8 @@ Draw scene
 Draw all the objects of the scene
 ====================================== 
 */
-void Game::DrawScene ()
+void Game::DrawScene()
 {
-	DrawBoard ();													// Draw the delimitation lines and blocks stored in the board
-	DrawPiece (mPosX, mPosY, mPiece, mRotation);					// Draw the playing piece
+	DrawBoard();								// Draw the delimitation lines and blocks stored in the board
+	DrawPiece(mPosX, mPosY, mPiece, mRotation); // Draw the playing piece
 }

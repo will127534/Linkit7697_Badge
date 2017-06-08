@@ -26,14 +26,13 @@
 
 // ------ Defines -----
 
-#define BOARD_LINE_WIDTH 6			// Width of each of the two lines that delimit the board
-#define BLOCK_SIZE 1				// Width and Height of each block of a piece
+#define BOARD_LINE_WIDTH 6 // Width of each of the two lines that delimit the board
+#define BLOCK_SIZE 1	   // Width and Height of each block of a piece
 
-#define BOARD_WIDTH 18				// Board width in blocks
-#define BOARD_HEIGHT 16				// Board height in blocks
+#define BOARD_WIDTH 18  // Board width in blocks
+#define BOARD_HEIGHT 16 // Board height in blocks
 
-#define PIECE_BLOCKS 5				// Number of horizontal and vertical blocks of a matrix piece
-
+#define PIECE_BLOCKS 5 // Number of horizontal and vertical blocks of a matrix piece
 
 // --------------------------------------------------------------------------------
 //									 Board
@@ -41,27 +40,29 @@
 
 class Board
 {
-public:
+  public:
+	Board(Pieces *pPieces, int pScreenHeight);
 
-	Board						(Pieces *pPieces, int pScreenHeight);
+	int GetXPosInPixels(int pPos);
+	int GetYPosInPixels(int pPos);
+	bool IsFreeBlock(int pX, int pY);
+	bool IsPossibleMovement(int pX, int pY, int pPiece, int pRotation);
+	void StorePiece(int pX, int pY, int pPiece, int pRotation);
+	void DeletePossibleLines();
+	bool IsGameOver();
 
-	int GetXPosInPixels			(int pPos);
-	int GetYPosInPixels			(int pPos);
-	bool IsFreeBlock			(int pX, int pY);
-	bool IsPossibleMovement		(int pX, int pY, int pPiece, int pRotation);
-	void StorePiece				(int pX, int pY, int pPiece, int pRotation);
-	void DeletePossibleLines	();
-	bool IsGameOver				();
-
-private:
-
-	enum { POS_FREE, POS_FILLED };			// POS_FREE = free position of the board; POS_FILLED = filled position of the board
-	int mBoard [BOARD_WIDTH][BOARD_HEIGHT];	// Board that contains the pieces
+  private:
+	enum
+	{
+		POS_FREE,
+		POS_FILLED
+	};									   // POS_FREE = free position of the board; POS_FILLED = filled position of the board
+	int mBoard[BOARD_WIDTH][BOARD_HEIGHT]; // Board that contains the pieces
 	Pieces *mPieces;
 	int mScreenHeight;
 
 	void InitBoard();
-	void DeleteLine (int pY);
+	void DeleteLine(int pY);
 };
 
 #endif // _BOARD_

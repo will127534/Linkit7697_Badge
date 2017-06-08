@@ -29,34 +29,29 @@
 const size_t SCREEN_W = 18;
 const size_t SCREEN_H = 16;
 const size_t FRAMEBUF_SIZE = SCREEN_W * SCREEN_H;
-extern unsigned char frameBuffer[FRAMEBUF_SIZE] = 
-{
- 0
-};
+extern unsigned char frameBuffer[FRAMEBUF_SIZE] =
+	{
+		0};
 
 /* 
 ======================================									
 Init
 ====================================== 
 */
-IO::IO():
-	mLastFrame(0)
+IO::IO() : mLastFrame(0)
 {
-	
 }
 
 void IO::Begin()
 {
-	
+
 	matrix.setRotation(1);
-  	matrix.setTextWrap(false);
+	matrix.setTextWrap(false);
 
 	mLastFrame = 0;
 	matrix.setFrame(mLastFrame);
 	matrix.clear();
-
 }
-
 
 int IO::getFrameIndex()
 {
@@ -79,13 +74,13 @@ void IO::flip()
 Clear the screen to black
 ====================================== 
 */
-void IO::ClearScreen() 
+void IO::ClearScreen()
 {
 	matrix.clear();
 
 	// test (0, 0) position
 	//matrix.drawPixel(0, 0, 255);
-	
+
 	flip();
 }
 
@@ -99,9 +94,9 @@ Parameters:
 >> pC				Rectangle color
 ====================================== 
 */
-void IO::DrawRectangle (int pX1, int pY1, int pX2, int pY2, enum color pC)
+void IO::DrawRectangle(int pX1, int pY1, int pX2, int pY2, enum color pC)
 {
-	if(pX1 < 0 || pY1 < 0)
+	if (pX1 < 0 || pY1 < 0)
 	{
 		return;
 	}
@@ -114,9 +109,8 @@ void IO::DrawRectangle (int pX1, int pY1, int pX2, int pY2, enum color pC)
 	Serial.println();
 	*/
 	// TODO: each block is a single dot - draw dot only
-	matrix.drawPixel(pX1, pY1, 100*analogRead(A0)/512.0);
+	matrix.drawPixel(pX1, pY1, 100 * analogRead(A0) / 512.0);
 }
-
 
 /* 
 ======================================									
@@ -128,7 +122,6 @@ int IO::GetScreenHeight()
 	return 16;
 }
 
-
 /* 
 ======================================									
 Update screen
@@ -139,7 +132,6 @@ void IO::UpdateScreen()
 	flip();
 }
 
-
 /* 
 ======================================									
 Keyboard Input
@@ -147,7 +139,7 @@ Keyboard Input
 */
 int IO::Pollkey()
 {
-	return scanning_button();
+	return scanButton();
 }
 
 /* 
@@ -166,7 +158,7 @@ int IO::Getkey()
 Keyboard Input
 ====================================== 
 */
-int IO::IsKeyDown (int pKey)
+int IO::IsKeyDown(int pKey)
 {
 	// TODO: check if a key is pressed
 	return 0;
@@ -180,5 +172,5 @@ SDL Graphical Initialization
 int IO::InitGraph()
 {
 	// TODO: initializes the graph
-    return 0;
+	return 0;
 }
