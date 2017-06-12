@@ -25,25 +25,12 @@
 /// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
 /// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef _Snake_hpp_
-#define _Snake_hpp_
+#ifndef _FACTORY_HPP_
+#define _FACTORY_HPP_
 
-#include <deque>
-#include "hal_trng.h"
-#include "Arduino.h"
-#include "Control.hpp"
+// Initiate unit test for factory testing.
+// This routine never returns.
+void jumpToUnitTest();
+void printMacAddress();
 
-struct dot_position
-{
-    int x;
-    int y;
-};
-
-void Snake_init();
-void Snake();
-bool Snake_loop();
-void Snake_updateScreen();
-bool CheckColition(dot_position test_pos);
-int GetRand(int pA, int pB);
-
-#endif // _Snake_hpp_
+#endif //  _FACTORY_HPP_

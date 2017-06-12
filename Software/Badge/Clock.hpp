@@ -25,25 +25,31 @@
 /// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
 /// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef _Snake_hpp_
-#define _Snake_hpp_
+#ifndef _SNAKE_HPP_
+#define _SNAKE_HPP_
 
-#include <deque>
-#include "hal_trng.h"
-#include "Arduino.h"
-#include "Control.hpp"
+#include <Arduino.h>
+#include <stdint.h>
+#include <time.h>
 
-struct dot_position
-{
-    int x;
-    int y;
-};
+/// Update local clock time from NTP protocol
+void syncClock();
 
-void Snake_init();
-void Snake();
-bool Snake_loop();
-void Snake_updateScreen();
-bool CheckColition(dot_position test_pos);
-int GetRand(int pA, int pB);
+/// Register RTC interrupt and update time every second
+void startClock();
 
-#endif // _Snake_hpp_
+/// Check if 1 second have passed;
+/// If it is passed, true is returned and
+/// the flag is cleared.
+///
+/// \returns true if 1 second is passed
+/// \returns false if haven't passed 1 second since last call.
+bool getAndClearUpdateFlag();
+
+/// Get current time since 1900
+unsigned long getEpoch();
+
+/// Convert from epoch time to time struct
+struct tm NTPparse(uint32_t epoch_time);
+
+#endif // _SNAKE_HPP_
