@@ -37,19 +37,22 @@
 #include "Clock.hpp"
 #include "Snake.hpp"
 #include "Tetris.hpp"
+#include "Floppy.hpp"
 #include "Factory.hpp"
 
 #include "icon.c"
 
 const unsigned int MAX_WIFI_INPUT_BUF = 64;
 int g_appID = 0;         ///< The "App" user selected, ranges from 0 to 3
-const int APP_COUNT = 4; ///< Number of apps in menu
+const int APP_COUNT = 5; ///< Number of apps in menu
+static char SSID[MAX_WIFI_INPUT_BUF] = {0};
+static char PASSWD[MAX_WIFI_INPUT_BUF] = {0};
 
 void setup()
 {
 
   initButtons();
-
+  LFlash.begin();
   // If `A-B-X-Y` are pressed (active LOW) at the same time,
   // enter Factory Test mode (and never leaves)
   delay(1000);
@@ -63,7 +66,7 @@ void setup()
 
   // Normal boot flow
   Serial.begin(115200);
-  Serial.setTimeout(60000);
+  Serial.setTimeout(6000);
   Serial.println("Normal bootup...");
 
   // Initialize LED Matrix
@@ -87,15 +90,19 @@ void setup()
   drawframe(Trophy, 0, 0, 18, 16);
   delay(3000);
   Serial.println("Boot Animation ended.");
-
-  // Try connecting to Wi-Fi Network.
-  const bool connected = connectToWiFi();
-
-  // Update our clock time from network
-  if (connected)
+  if (!digitalRead(USR_BUTTON))
   {
-    syncClock();
+    // Try connecting to Wi-Fi Network.
+    const bool connected = connectToWiFi();
+
+    // Update our clock time from network
+    if (connected)
+    {
+      syncClock();
+    }
+    
   }
+  
   startClock();
 
   showMenu();
@@ -118,6 +125,10 @@ void loop()
     showMenu();
     break;
   case 3:
+    Floppy();
+    showMenu();
+    break;
+  case 4:
     UpdateWifiSetting();
     showMenu();
     break;
@@ -134,21 +145,18 @@ void loop()
 /// \returns false if failed to connect or there is no SSID/PASSWD setting
 bool connectToWiFi()
 {
-  LFlash.begin();
   // Wi-Fi SSID and Password should be less than 64 bytes or less.
-  char ssid[MAX_WIFI_INPUT_BUF] = {0};
-  char pass[MAX_WIFI_INPUT_BUF] = {0};
   uint32_t bufLen = MAX_WIFI_INPUT_BUF;
 
   printMacAddress();
-  LFlash.read("USER", "SSID", (uint8_t *)ssid, &bufLen);
-  LFlash.read("USER", "PASSWD", (uint8_t *)pass, &bufLen);
+  LFlash.read("USER", "SSID", (uint8_t *)SSID, &bufLen);
+  LFlash.read("USER", "PASSWD", (uint8_t *)PASSWD, &bufLen);
   Serial.print("Stored SSID:");
-  Serial.println(ssid);
+  Serial.println(SSID);
   Serial.print("Stored PASSWD:");
-  Serial.println(pass);
+  Serial.println(PASSWD);
 
-  if (ssid[0] == 0 || pass[0] == 0)
+  if (SSID[0] == 0 || PASSWD[0] == 0)
   {
     // Empty SSID and Password => Update Wifi Setting
     Serial.println("Wifi Setting not found. Please select Wi-Fi setting from menu.");
@@ -161,14 +169,14 @@ bool connectToWiFi()
   // Wi-Fi animation
   Serial.println("Wifi Setting found...");
   Serial.print("Attempting to connect to SSID: ");
-  Serial.println(ssid);
+  Serial.println(SSID);
   for (int i = 0; i < 3; i++)
   {
     animation(Wifi_search, 4, 0, 0, 18, 16, 50);
   }
 
   // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
-  const int status = WiFi.begin(ssid, pass);
+  const int status = WiFi.begin(SSID, PASSWD);
 
   // If fail to connect, show failure icon
   if (status != WL_CONNECTED)
@@ -335,13 +343,12 @@ void printWifiStatus()
   Serial.println(" dBm");
 }
 
+
+
 void UpdateWifiSetting()
 {
   Serial.println("Please enter Wifi SSID:");
   drawframe(Wifi_input, 0, 0, 18, 16);
-
-  char SSID[MAX_WIFI_INPUT_BUF] = {0};
-  char PASSWD[MAX_WIFI_INPUT_BUF] = {0};
 
   Serial.readBytesUntil('\n', SSID, MAX_WIFI_INPUT_BUF);
 
